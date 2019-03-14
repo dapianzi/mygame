@@ -8,20 +8,7 @@
 define('APP_PATH', dirname(dirname(__FILE__)));
 require APP_PATH . '/lib/Swoolf/Loader.php';
 
-$app = new \Swoolf\App(APP_PATH . '/conf/application.ini');
-$app->serverConf([
-    'type' => \Swoolf\App::SERVER_TYPE_HTTP,
-    'name' => 'my-http',
-    'port' => 8905,
-    'settings' => [
-        'daemonize' => 1,
-        'log_file' => APP_PATH . '/log/http.log',
-        'pid_file' => APP_PATH . '/pid/http.pid',
-        'upload_tmp_dir' => APP_PATH . '/temp/',
-        'document_root' => APP_PATH . '/public/',
-        "enable_static_handler"=>true,
-    ]
-]);
+$app = new \Swoolf\App(APP_PATH . '/conf/http.ini');
 $app->on('request', function($request, $response) {
     switch ($request->server['request_uri']){
         case '/favicon.ico': {
