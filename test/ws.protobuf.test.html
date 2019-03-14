@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WS PROTOBUF TEST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!--<link href="https://cdn.bootcss.com/twitter-bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</head>
+<style type="text/css">
+    html,body{height: 100%;background-color: #ffffff;}
+    #page {height:100%; width: 100%; max-width: 480px; margin: 0 auto;}
+    .tab{ display: none;}
+    .tab.view{display: block;}
+    .register-form,.login-form{padding:0 20px;}
+    .register-header,.login-header{line-height: 60px;font-size: 28px; }
+    #loading{height: 100%;}
+    .loading{position: absolute; top: 50%; width: 100%; margin-top: -20px; line-height: 40px; text-align: center;}
+    #chat.view {display: grid; grid-template-rows: 40px 1fr 60px; height: 100%;}
+    #message-header{height:40px; line-height: 40px;font-size: 28px;padding-left: 10px;}
+    #message-container{padding: 10px; background-color: #ececec; overflow-y: scroll;}
+    #message-sender{ height:40px; padding: 10px;}
+    .chat-container.current{display:block;}
+    .back-btn{display:block; float:left; height:40px; width:0; margin-top:10px; position: relative;}
+    .back-btn::before {content:''; display:block; position: absolute; top:6px; left:16px; width:24px; height:24px;
+        border-top:4px solid #FFFFFF; border-left:4px solid #FFFFFF; transform: rotate(-45deg); border-radius: 4px;}
+
+    .message{margin-top: 5px;}
+    .message::after{content:''; display: block; height:0; width:100%; clear: both;}
+    .avatar{width:36px; height:36px; border-radius: 5px; border: 2px solid #DEDEDE; background: #282C34;
+        background-repeat: no-repeat; background-size: contain; background-position: center center;}
+    .message-content{
+        border-radius: 6px;
+        margin:2px;
+        line-height: 20px;
+        min-height:28px;
+        padding:6px 8px;
+        font-size: 14px;
+        position:relative;
+        max-width:60%;
+        word-wrap: break-word;
+    }
+    .message-other .avatar{float:left;}
+    .message-other .message-content{float:left; background: #FFFFFF; margin-left:10px;}
+    .message-other .message-content::after{content:''; display: block; width:0px; height:0px;
+        border-right: 8px white solid;
+        border-top: 6px solid rgba(0,0,0,0);
+        border-bottom: 6px solid rgba(0,0,0,0);
+        left:-6px; top:10px; position: absolute;
+    }
+    .message-mine .avatar{float:right;}
+    .message-mine .message-content{float:right; background: lightgreen; margin-right:10px;}
+    .message-mine .message-content::after{content:''; display: block; width:0px; height:0px;
+        border-left: 8px lightgreen solid;
+        border-top: 6px solid rgba(0,0,0,0);
+        border-bottom: 6px solid rgba(0,0,0,0);
+        right:-6px; top:10px; position: absolute;
+    }
+    .message-mine.failed .message-content::before{
+        content: '!';
+        display: block;
+        width: 16px;
+        height: 16px;
+        text-align: center;
+        border-radius: 20px;
+        line-height: 16px;
+        font-size: 12px;
+        font-weight: bold;
+        font-family: auto;
+        color: #ffffff;
+        background-color: #FF5722;
+        left: -20px;
+        top: 50%;
+        position: absolute;
+        margin-top: -8px;
+    }
+    .message-mine.sending .message-content::before{
+        content: '';
+        display: block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #cdcdcd;
+        border-radius: 20px;
+        border-left: 2px solid rgba(0,0,0,0);
+        background-color: rgba(0,0,0,0);
+        left: -20px;
+        top: 50%;
+        position: absolute;
+        margin-top: -8px;
+        animation: rotate 1.5s linear infinite;
+    }
+    .message-img {
+        display:inline-block;
+        max-width: 50%;
+        padding: 10px;
+    }
+    .message-img img {
+        max-width: 100%;
+        max-height: 360px;
+    }
+    @keyframes rotate {
+        from {transform: rotate(0deg);}
+        to {transform: rotate(360deg);}
+    }
+    .avatars{
+    }
+    .avatar-item{
+        width: 87px;
+        height: 87px;
+        display: inline-block;
+        margin: 5px;
+        vertical-align:top;
+        border: 3px solid #4d4d4d;
+        opacity: 0.8;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center center;
+    }
+    .avatar-item[data-id="1"]{background-image: url('/default/avatar_1.jpg');}
+    .avatar-item[data-id="2"]{background-image: url('/default/avatar_2.jpg');}
+    .avatar-item[data-id="3"]{background-image: url('/default/avatar_3.jpg');}
+    .avatar-item[data-id="4"]{background-image: url('/default/avatar_4.jpg');}
+    .avatar-item[data-id="5"]{background-image: url('/default/avatar_5.jpg');}
+    .avatar-item[data-id="6"]{background-image: url('/default/avatar_6.jpg');}
+    .avatar-item[data-id="7"]{background-image: url('/default/avatar_7.jpg');}
+    .avatar-item[data-id="8"]{background-image: url('/default/avatar_8.jpg');}
+    .avatar-item[data-id="9"]{background-image: url('/default/avatar_9.jpg');}
+    .avatar-item.chosen{
+        border: 3px solid #12ba34;
+        opacity: 1;
+    }
+    .avatar-option{
+        width: 100%;
+    }
+</style>
+<body>
+<div id="page">
+    <div class="tab" id="loading"><div class="loading">Loading..</div></div>
+    <div class="tab" id="register">
+        <div class="register-form">
+            <div class="register-header">Join Us | <a class="btn btn-xs btn-primary" id="switch-login">Login</a></div>
+            <div id="register-err"></div>
+            <form>
+                <div class="form-group">
+                    <label for="MyUsername">Username</label>
+                    <input type="text" class="form-control" id="MyUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="MyPassword">Password</label>
+                    <input type="password" class="form-control" id="MyPassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="MyAvatar">Choose an avarar</label>
+                    <div class="avatars" id="MyAvatar">
+                        <div class="avatar-item" data-id="1"></div>
+                        <div class="avatar-item" data-id="2"></div>
+                        <div class="avatar-item" data-id="3"></div>
+                        <div class="avatar-item" data-id="4"></div>
+                        <div class="avatar-item" data-id="5"></div>
+                        <div class="avatar-item" data-id="6"></div>
+                        <div class="avatar-item" data-id="7"></div>
+                        <div class="avatar-item" data-id="8"></div>
+                        <div class="avatar-item" data-id="9"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success btn-block" id="btn-register">Let's Start</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="tab" id="login">
+        <div class="login-form">
+            <div class="login-header">Login | <a class="btn btn-xs btn-primary" id="switch-register">Login</a></div>
+            <div id="login-err"></div>
+            <form>
+                <div class="form-group">
+                    <label for="LoginUsername">Username</label>
+                    <input type="text" class="form-control" id="LoginUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label for="LoginPassword">Password</label>
+                    <input type="password" class="form-control" id="LoginPassword" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success btn-block" id="btn-login">Begin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="tab" id="chat">
+        <div id="message-header">PROTOBUF |
+            <!--<a class="btn btn-xs btn-primary" id="get-users">Get Users</a> |-->
+            <a class="btn btn-xs btn-primary" id="logout">Logout</a>
+        </div>
+        <div id="message-container"></div>
+        <div id="message-sender">
+            <div class="input-group">
+                <span class="input-group-addon" id="send-emoji">
+                    <label>
+                    <input type="file" id="file-inp" accept="image/gif, image/jpeg, image/png" style="width:0;height:0;display: none;" />
+                    Pic
+                    </label>
+                </span>
+                <input type="text" class="form-control" id="msg-text" placeholder="Text...">
+                <span class="input-group-addon" id="send-text" >Text</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="avatarChooseModal" tabindex="-1" role="dialog" aria-labelledby="avatarChooseModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="avatarChooseModalLabel">Choose</h4>
+            </div>
+            <div class="modal-body">
+                <div class="avatars">
+                    <div class="avatar-item" data-id="1"></div>
+                    <div class="avatar-item" data-id="2"></div>
+                    <div class="avatar-item" data-id="3"></div>
+                    <div class="avatar-item" data-id="4"></div>
+                    <div class="avatar-item" data-id="5"></div>
+                    <div class="avatar-item" data-id="6"></div>
+                    <div class="avatar-item" data-id="7"></div>
+                    <div class="avatar-item" data-id="8"></div>
+                    <div class="avatar-item" data-id="9"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-avatar">Save</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript" src="/protobuf.min.js"></script>
+<script type="text/javascript" src="/js/my_probuf.js"></script>
+<script type="text/javascript" src="/js/my_utils.js"></script>
+<script type="text/javascript" src="/js/my_user.js"></script>
+<script type="text/javascript" src="/js/my_ui.js"></script>
+<script type="text/javascript" src="/js/my_client.js"></script>
+<script type="text/javascript">
+    $(function(){
+        my_client.ini(function(){
+            console.log(111);
+        });
+    });
+</script>
+</body>
+</html>

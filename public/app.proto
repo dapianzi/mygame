@@ -1,0 +1,108 @@
+syntax =  "proto3";
+package Proto;
+
+message MessageBody {
+    uint64 msgID = 1;
+    MessageType msgType = 2;
+    string content = 3;
+    uint64 stamp = 4;
+    uint32 from = 5;
+}
+message Chat {
+    uint32 id = 1;
+    string icon = 2;
+    uint32 last_time = 3;
+    string last_msg = 4;
+}
+message Role {
+    uint32 id = 1;
+    string name = 2;
+    string avatar = 3;
+}
+enum MessageType {
+    TEXT = 0;
+    BLOB = 1;
+    PIC = 2;
+    NOTIFY = 3;
+}
+enum Error {
+    SUCCESS = 0;
+    ERR = 1;
+}
+
+
+// 1001
+message RequestRegister {
+    string username = 1;
+    string password = 2;
+    string avatar = 3;
+}
+// 1002
+message ResponseRegister {
+    Error err = 1;
+    string token = 2;
+}
+// 1003
+message RequestLogin {
+    string token = 1;
+}
+// 1004
+message ResponseLogin {
+    Error err = 1;
+    uint32 id = 2;
+    string username = 3;
+    string avatar = 4;
+    repeated Chat chats = 5;
+    repeated Role friends = 6;
+}
+
+// 1005
+message RequestLogout{
+    uint64 ts = 1;
+}
+// 1006
+message ResponseLogout{
+    Error err = 1;
+}
+
+// 1007
+message RequestSendMessage {
+    uint32 ChatId = 1;
+    MessageBody msg = 2;
+}
+// 1008
+message ResponseSendMessage {
+    Error err = 1;
+    uint64 msgID = 2;
+}
+
+// 1009
+message ResponseUserOnline {
+    Error err = 1;
+    Role role = 2;
+}
+
+// 1010
+message ResponseReceiveMessage {
+    uint32 ChatId = 1;
+    MessageBody msg = 3;
+}
+// 1011
+message RequestGetHistoryMessage {
+    uint32 ChatId = 1;
+    uint32 stamp = 2;
+}
+// 1012
+message ResponseGetHistoryMessage {
+    Error err = 1;
+    uint32 ChatId = 2;
+    repeated MessageBody msg = 3;
+}
+
+message A {
+    uint32 id = 1;
+    B sub = 2;
+}
+message B {
+    uint32 sub_id = 1;
+}
